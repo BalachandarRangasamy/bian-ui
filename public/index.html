@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API Caller</title>
+  <style>
+    body {
+      background-image: url('background.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      margin-top: 50px;
+      text-align: center;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+  </style>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>API Caller</h1>
+    <button onclick="callApiSequentially()">Call APIs Sequentially</button>
+    <br/>
+    <label id="label1" style="display: none;"></label><br/>
+    <label id="label2" style="display: none;"></label><br/>
+    <label id="label3" style="display: none;"></label><br/>
+    <label id="label4" style="display: none;"></label><br/>
+    <label id="label5" style="display: none;"></label>
+  </div>
+
+  <script>
+    const labels = [
+      document.getElementById('label1'),
+      document.getElementById('label2'),
+      document.getElementById('label3'),
+      document.getElementById('label4'),
+      document.getElementById('label5')
+    ];
+
+    let currentLabelIndex = 0;
+
+    function callApiSequentially() {
+      axios.get('/api')
+        .then(response => {
+          console.log(response.data); // Handle the API response here
+
+          labels[currentLabelIndex].innerText = response.data.data;
+          labels[currentLabelIndex].style.display = 'block';
+
+          if (response.data.hideLabels) {
+            // Hide labels when starting over
+            labels.forEach(label => {
+              label.style.display = 'none';
+            });
+          }
+
+          currentLabelIndex++;
+          if (currentLabelIndex >= 5) {
+            currentLabelIndex = 0;
+          }
+        })
+        .catch(error => {
+          console.error(error); // Handle API call errors here
+
+          labels[currentLabelIndex].innerText = response.data.error;
+          labels[currentLabelIndex].style.display = 'block';
+
+          if (response.data.hideLabels) {
+            // Hide labels when starting over
+            labels.forEach(label => {
+              label.style.display = 'none';
+            });
+          }
+
+          currentLabelIndex++;
+          if (currentLabelIndex >= 5) {
+            currentLabelIndex = 0;
+          }
+        });
+    }
+  </script>
+</body>
+</html>
